@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const rawBase = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Auto-clean any brackets, spaces, or formatting quirks from VITE_API_URL
+const rawBase = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/[<>\s]/g, '');
 const normalizedBase = rawBase.endsWith('/api') ? rawBase : `${rawBase.replace(/\/+$/, '')}/api`;
 
 const api = axios.create({

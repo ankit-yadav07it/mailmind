@@ -11,7 +11,8 @@ export const useAuth = () => {
   return context;
 };
 
-const rawApi = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Auto-clean any brackets, spaces, or formatting quirks from VITE_API_URL
+const rawApi = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/[<>\s]/g, '');
 const API_BASE = rawApi.endsWith('/api') ? rawApi : `${rawApi.replace(/\/+$/, '')}/api`;
 
 export function AuthProvider({ children }) {
