@@ -11,7 +11,8 @@ export const useAuth = () => {
   return context;
 };
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const rawApi = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE = rawApi.endsWith('/api') ? rawApi : `${rawApi.replace(/\/+$/, '')}/api`;
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);

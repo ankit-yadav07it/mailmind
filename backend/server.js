@@ -10,7 +10,7 @@ const { verifyToken, requireRole } = require('./src/middleware/auth');
 
 const app = express();
 
-// Permissive CORS for development
+// Permissive CORS for development & production
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(morgan('dev'));
@@ -44,7 +44,7 @@ app.get('/', (req, res) => {
         <div class="badge"><div class="dot"></div> Backend API Server is Running</div>
         <h1>MailMind REST API (Port 5000)</h1>
         <p>The backend API is fully operational and connected to the local NeDB datastore with 20 pre-seeded conversations.</p>
-        <a href="http://localhost:5173" class="btn">🚀 Open Frontend UI (localhost:5173)</a>
+        <a href="https://mailmind-omega-two.vercel.app" class="btn">🚀 Open Frontend UI</a>
         <div class="endpoints">
           <div style="color: #64748B; margin-bottom: 6px; font-weight: bold;">AVAILABLE API ENDPOINTS:</div>
           <div>GET  /api/health</div>
@@ -69,7 +69,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Route registration
+// Standard API routes
 app.use('/api/auth',          require('./src/routes/auth'));
 app.use('/api/accounts',      verifyToken,                      require('./src/routes/accounts'));
 app.use('/api/conversations',  verifyToken,                      require('./src/routes/conversations'));
@@ -78,6 +78,16 @@ app.use('/api/ai',            verifyToken,                      require('./src/r
 app.use('/api/client',        verifyToken, requireRole('client'), require('./src/routes/client'));
 app.use('/api/replies',       verifyToken,                      require('./src/routes/replies'));
 app.use('/api/notifications', verifyToken,                      require('./src/routes/notifications'));
+
+// Direct aliases without /api prefix for maximum reliability
+app.use('/auth',              require('./src/routes/auth'));
+app.use('/accounts',          verifyToken,                      require('./src/routes/accounts'));
+app.use('/conversations',     verifyToken,                      require('./src/routes/conversations'));
+app.use('/dashboard',         verifyToken,                      require('./src/routes/dashboard'));
+app.use('/ai',                verifyToken,                      require('./src/routes/ai'));
+app.use('/client',            verifyToken, requireRole('client'), require('./src/routes/client'));
+app.use('/replies',           verifyToken,                      require('./src/routes/replies'));
+app.use('/notifications',     verifyToken,                      require('./src/routes/notifications'));
 
 // Global error handling middleware
 app.use(errorHandler);
@@ -92,9 +102,8 @@ const PORT = process.env.PORT || 5000;
   }
 
   app.listen(PORT, () => {
-    console.log(`✅ MailMind backend running on http://localhost:${PORT}`);
+    console.log(`✅ MailMind backend running on port ${PORT}`);
     console.log(`   DB: NeDB (file-backed, no MongoDB needed)`);
-    console.log(`   Health: http://localhost:${PORT}/api/health`);
   });
 })();
 
